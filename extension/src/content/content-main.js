@@ -10,6 +10,7 @@ if (!allowed.some((d) => location.hostname.endsWith(d))) {
 }
 
 async function bootstrap() {
+  if (document.querySelector("#ai-operator-root")) return;
   const wrapper = document.createElement("div");
   wrapper.innerHTML = await (await fetch(chrome.runtime.getURL("src/content/overlay.html"))).text();
   document.documentElement.appendChild(wrapper.firstElementChild);
@@ -17,6 +18,7 @@ async function bootstrap() {
   const logEl = document.querySelector("#ai-log");
   const elementsEl = document.querySelector("#ai-elements");
   const overlayToggle = document.querySelector("#ai-toggle-boxes");
+  const rootEl = document.querySelector("#ai-operator-root");
   let currentSnapshot = [];
   let overlaysVisible = false;
   let boxes = [];
@@ -31,8 +33,10 @@ async function bootstrap() {
     boxes = elements.slice(0, 40).map((e) => {
       const box = document.createElement("div");
       box.className = "ai-overlay-box";
-      box.style.left = `${Math.max(0, e.rect.x)}px`;
-      box.style.top = `${Math.max(0, e.rect.y)}px`;
+      const left = Number.isFinite(e.rect.x) ? e.rect.x : e.rect.left;
+      const top = Number.isFinite(e.rect.y) ? e.rect.y : e.rect.top;
+      box.style.left = `${Math.max(0, left)}px`;
+      box.style.top = `${Math.max(0, top)}px`;
       box.style.width = `${Math.max(1, e.rect.width)}px`;
       box.style.height = `${Math.max(1, e.rect.height)}px`;
       const label = document.createElement("div");
@@ -62,6 +66,13 @@ async function bootstrap() {
   });
 
   scanner.start();
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message?.type !== "TOGGLE_AI_OPERATOR") return;
+    const isHidden = rootEl.style.display === "none";
+    rootEl.style.display = isHidden ? "block" : "none";
+    if (!isHidden) clearBoxes();
+  });
 
   overlayToggle.addEventListener("click", () => {
     overlaysVisible = !overlaysVisible;
