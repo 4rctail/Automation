@@ -3,7 +3,7 @@
   "name": "AI Browser Operator",
   "version": "0.1.0",
   "description": "AI-assisted browser automation for dynamic web apps.",
-  "permissions": ["storage", "tabs", "scripting", "activeTab"],
+  "permissions": ["storage", "activeTab"],
   "host_permissions": [
     "https://ads.tiktok.com/*",
     "https://*.tiktok.com/*"
