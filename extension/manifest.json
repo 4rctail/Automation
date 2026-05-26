@@ -3,7 +3,7 @@
   "name": "AI Browser Operator",
   "version": "0.1.0",
   "description": "AI-assisted browser automation for dynamic web apps.",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [
     "https://ads.tiktok.com/*",
     "https://*.tiktok.com/*"
@@ -34,5 +34,14 @@
   ],
   "action": {
     "default_title": "AI Browser Operator"
+  },
+  "commands": {
+    "toggle-operator": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Toggle AI Browser Operator overlay"
+    }
   }
 }

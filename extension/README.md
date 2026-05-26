@@ -8,6 +8,13 @@
 5. Navigate to an allowed domain (default: TikTok Ads Manager URLs).
 6. Use the floating panel to inspect detected elements and run prompts.
 
+## Open / toggle the panel
+- Click the **pinned AI Browser Operator extension icon** in the browser toolbar.
+- Or use keyboard shortcut:
+  - Windows/Linux: `Ctrl+Shift+Y`
+  - macOS: `Command+Shift+Y`
+- If shortcut conflicts with another extension, change it in `chrome://extensions/shortcuts` (or `edge://extensions/shortcuts`).
+
 ## Example prompts
 - `Click Create and wait for GMV`
 - `Find Ad Name field and enter Summer Campaign`
