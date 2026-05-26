@@ -3,7 +3,7 @@ const { ActionEngine } = window.AIOperatorActionEngine;
 const { parsePrompt } = window.AIOperatorPromptParser;
 
 const allowed = ["ads.tiktok.com", "business.tiktok.com"];
-if (!allowed.some((d) => location.hostname.endsWith(d))) {
+if (!(allowed.some((d) => location.hostname.endsWith(d)) || location.protocol === "file:")) {
   console.info("AI Operator disabled on non-allowed domain.");
 } else {
   bootstrap();
@@ -66,6 +66,7 @@ async function bootstrap() {
   });
 
   scanner.start();
+  engine.logger(`Overlay bootstrapped on ${location.href}`);
 
   chrome.runtime.onMessage.addListener((message) => {
     if (message?.type !== "TOGGLE_AI_OPERATOR") return;
@@ -108,4 +109,20 @@ async function bootstrap() {
       await engine.enqueue(action);
     }
   });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "y") {
+      const isHidden = rootEl.style.display === "none";
+      rootEl.style.display = isHidden ? "block" : "none";
+      engine.logger(`Local keybind toggle: ${isHidden ? "show" : "hide"}`);
+    }
+  });
+
+  setInterval(() => {
+    chrome.runtime.sendMessage({ type: "AI_OPERATOR_DEBUG" }, (res) => {
+      if (!res?.ok) return;
+      const d = res.debugState || {};
+      rootEl.dataset.debug = `${d.lastAction || "-"} | ${d.lastError || "ok"}`;
+    });
+  }, 3000);
 }

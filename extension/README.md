@@ -5,8 +5,9 @@
 2. Open Chromium/Chrome and go to `chrome://extensions`.
 3. Enable **Developer mode**.
 4. Click **Load unpacked** and select the `extension/` folder.
-5. Navigate to an allowed domain (default: TikTok Ads Manager URLs).
-6. Use the floating panel to inspect detected elements and run prompts.
+5. If testing local files, enable **Allow access to file URLs** on the extension details page.
+6. Navigate to an allowed domain (TikTok URLs) or open a local `file://` HTML page.
+7. Use the floating panel to inspect detected elements and run prompts.
 
 ## Open / toggle the panel
 - Click the **pinned AI Browser Operator extension icon** in the browser toolbar.
