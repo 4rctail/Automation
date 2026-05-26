@@ -1,0 +1,6 @@
+#ai-operator-root{position:fixed;right:16px;top:16px;z-index:2147483647;width:340px;background:#0f172a;color:#e2e8f0;padding:10px;border-radius:10px;font:12px/1.4 sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#ai-operator-root textarea{width:100%;min-height:64px;margin:6px 0;background:#111827;color:#fff}
+#ai-operator-root button{width:100%;background:#2563eb;color:#fff;border:0;padding:8px;border-radius:6px;cursor:pointer}
+#ai-log{max-height:120px;overflow:auto;background:#020617;padding:6px;margin:8px 0}
+#ai-elements{max-height:180px;overflow:auto}
+.ai-highlight{outline:2px solid #f59e0b !important;outline-offset:2px !important}
