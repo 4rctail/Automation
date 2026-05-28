@@ -68,5 +68,6 @@
       },
       "description": "Toggle AI Browser Operator overlay"
     }
-  }
+  },
+  "devtools_page": "src/devtools/devtools.html"
 }

@@ -28,6 +28,16 @@
   - macOS: `Command+Shift+Y`
 - If shortcut conflicts with another extension, change it in `chrome://extensions/shortcuts` (or `edge://extensions/shortcuts`).
 
+## DevTools panel
+1. Load or reload the unpacked extension from `chrome://extensions`.
+2. Open a supported page.
+3. Open Chrome DevTools with `F12` or `Ctrl+Shift+I`.
+4. Select the **AI Operator** DevTools tab.
+5. Use **Refresh page info** to read the inspected page URL, title, and user agent.
+6. Reload or use the page while DevTools is open to see recent network request metadata in the panel.
+
+The DevTools panel uses supported `chrome.devtools` APIs. It creates its own panel; it does not scrape Chrome's built-in Console, Network, Sources, or Elements panel UI.
+
 ## Text file export/import
 - **Save BrowserSelect.txt**: exports the hierarchy of PC, Browser, Windows/Tabs, current page details, page controls, and visible text in a readable pipe-delimited format.
 - **Save BrowserInstruction.txt**: exports instruction text with metadata header.
@@ -53,6 +63,7 @@
 
 ## Architecture
 - Manifest V3 + background service worker
+- DevTools page and custom DevTools panel for inspected page diagnostics and network metadata
 - Content script with:
   - DOM scanner with MutationObserver
   - Prompt parser
@@ -69,6 +80,7 @@
 
 ## Troubleshooting
 - Reload the unpacked extension in `chrome://extensions` after changing files.
+- If the **AI Operator** DevTools tab does not appear, reload the unpacked extension and reopen DevTools.
 - Pin the extension icon, then click it to show the overlay on the active page.
 - Test on the localhost demo page before testing larger apps.
 - Inspect the extension service worker from `chrome://extensions` to review background logs and errors.
@@ -81,3 +93,4 @@
 - Coordinate-based clicking is not used.
 - Destructive-looking actions require explicit `confirm()`.
 - Automation is restricted to allowed domains in both manifest and runtime guard.
+- DevTools support is limited to official DevTools extension APIs; the extension cannot directly read Chrome's built-in DevTools UI.
