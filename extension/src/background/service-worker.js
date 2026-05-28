@@ -138,4 +138,59 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ ok: true, debugState });
     return true;
   }
+  if (message?.type === "AI_OPERATOR_BROWSER_CONTEXT") {
+    collectBrowserContext(sender)
+      .then((context) => sendResponse({ ok: true, context }))
+      .catch((err) => sendResponse({ ok: false, error: err.message }));
+    return true;
+  }
 });
+
+async function collectBrowserContext(sender) {
+  const [platform, windows] = await Promise.all([
+    getPlatformInfo(),
+    chrome.windows.getAll({ populate: true, windowTypes: ["normal"] })
+  ]);
+
+  return {
+    pc: {
+      label: "This PC",
+      os: platform.os,
+      arch: platform.arch,
+      naclArch: platform.nacl_arch,
+      userAgent: navigator.userAgent
+    },
+    browser: {
+      label: chrome.runtime.getManifest().name,
+      runtime: "Chromium extension",
+      windowCount: windows.length,
+      tabCount: windows.reduce((sum, browserWindow) => sum + (browserWindow.tabs?.length || 0), 0)
+    },
+    currentTabId: sender?.tab?.id || null,
+    windows: windows.map((browserWindow) => ({
+      id: browserWindow.id,
+      focused: browserWindow.focused,
+      state: browserWindow.state,
+      type: browserWindow.type,
+      tabs: (browserWindow.tabs || []).map((tab) => ({
+        id: tab.id,
+        windowId: tab.windowId,
+        index: tab.index,
+        active: tab.active,
+        highlighted: tab.highlighted,
+        pinned: tab.pinned,
+        audible: tab.audible,
+        status: tab.status,
+        title: tab.title || "Untitled tab",
+        url: tab.url || "",
+        favIconUrl: tab.favIconUrl || ""
+      }))
+    }))
+  };
+}
+
+function getPlatformInfo() {
+  return new Promise((resolve) => {
+    chrome.runtime.getPlatformInfo(resolve);
+  });
+}

@@ -19,7 +19,7 @@
    ```
 2. Open `http://localhost:8000/test-page.html`.
 3. Click the pinned extension icon or press `Ctrl+Shift+Y`.
-4. Confirm the detected-elements list includes the campaign buttons, Ad Name input, Objective dropdown, GMV text, checkbox/toggle, link, dialog-like section, and the dynamic button that appears after 2 seconds.
+4. Confirm the overlay first shows a collapsible **PC** node, then **Browser**, then **Tabs and windows**, then **Current Page Details** with buttons, text, inputs, dropdowns, toggles, links, and the dynamic button that appears after 2 seconds.
 
 ## Open / toggle the panel
 - Click the **pinned AI Browser Operator extension icon** in the browser toolbar to always show the panel.
@@ -29,7 +29,7 @@
 - If shortcut conflicts with another extension, change it in `chrome://extensions/shortcuts` (or `edge://extensions/shortcuts`).
 
 ## Text file export/import
-- **Save BrowserSelect.txt**: exports currently detected elements in a readable pipe-delimited format.
+- **Save BrowserSelect.txt**: exports the hierarchy of PC, Browser, Windows/Tabs, current page details, page controls, and visible text in a readable pipe-delimited format.
 - **Save BrowserInstruction.txt**: exports instruction text with metadata header.
 - **Load instruction file**: choose a `.txt` file; lines beginning with `#` are ignored (excluded from parsing), remaining lines are loaded into prompt box.
 - **Fetch BrowserInstruction**: reads instructions from `http://localhost:8787/BrowserInstruction.txt`, ignores comment lines beginning with `#`, and loads the remaining text into the prompt box.
@@ -57,8 +57,9 @@
   - DOM scanner with MutationObserver
   - Prompt parser
   - Async action engine with retries
-  - Overlay UI for logs, diagnostics, detected elements, and command input
+  - Overlay UI for logs, diagnostics, detected elements, PC/browser/tab tree, and command input
   - Optional live BrowserSelect sync to a local Node file server
+- The extension requests the Chromium `tabs` permission so the background worker can gather browser window and tab titles/URLs for the PC → Browser → Tabs tree.
 - Selector priority:
   - `data-testid`
   - `aria-label`
@@ -71,7 +72,8 @@
 - Pin the extension icon, then click it to show the overlay on the active page.
 - Test on the localhost demo page before testing larger apps.
 - Inspect the extension service worker from `chrome://extensions` to review background logs and errors.
-- Use the overlay **Diagnostics** button to inspect the last URL, last action, last error, injection time, and show/toggle times reported by the service worker.
+- Use **Refresh PC/Browser/Tabs** if the browser/tab tree looks stale after opening or closing tabs.
+- Use the overlay **Diagnostics** button to inspect the last URL, last action, last error, injection time, show/toggle times, and browser context reported by the service worker.
 - Confirm `node extension/tools/browser-file-server.js` is running before enabling live sync or fetching remote instructions.
 
 ## Notes
