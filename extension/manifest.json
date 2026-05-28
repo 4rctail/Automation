@@ -3,11 +3,21 @@
   "name": "AI Browser Operator",
   "version": "0.1.0",
   "description": "AI-assisted browser automation for dynamic web apps.",
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
   "host_permissions": [
     "https://ads.tiktok.com/*",
     "https://*.tiktok.com/*",
-    "file:///*"
+    "file:///*",
+    "http://localhost/*",
+    "http://localhost:*/*",
+    "http://127.0.0.1/*",
+    "http://127.0.0.1:*/*",
+    "http://localhost:8787/*"
   ],
   "background": {
     "service_worker": "src/background/service-worker.js",
@@ -15,7 +25,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://ads.tiktok.com/*", "https://*.tiktok.com/*", "file:///*"],
+      "matches": [
+        "https://ads.tiktok.com/*",
+        "https://*.tiktok.com/*",
+        "file:///*",
+        "http://localhost/*",
+        "http://localhost:*/*",
+        "http://127.0.0.1/*",
+        "http://127.0.0.1:*/*"
+      ],
       "js": [
         "src/shared/selectors.js",
         "src/content/dom-scanner.js",
@@ -23,14 +41,20 @@
         "src/content/prompt-parser.js",
         "src/content/content-main.js"
       ],
-      "css": ["src/content/overlay.css"],
+      "css": [
+        "src/content/overlay.css"
+      ],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["src/content/overlay.html"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "src/content/overlay.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "action": {

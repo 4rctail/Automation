@@ -10,6 +10,21 @@
     <button id="ai-save-instruction">Save BrowserInstruction.txt</button>
   </div>
   <input id="ai-load-instruction" type="file" accept=".txt" />
+  <div class="ai-field-row">
+    <label><input id="ai-live-sync-select" type="checkbox" /> Live sync BrowserSelect</label>
+    <input id="ai-live-sync-endpoint" type="url" value="http://localhost:8787/BrowserSelect.txt" />
+  </div>
+  <div class="ai-field-row">
+    <button id="ai-fetch-instruction">Fetch BrowserInstruction</button>
+    <input id="ai-instruction-endpoint" type="url" value="http://localhost:8787/BrowserInstruction.txt" />
+  </div>
+  <div class="ai-actions">
+    <button id="ai-refresh-context">Refresh PC/Browser/Tabs</button>
+    <button id="ai-diagnostics-button">Diagnostics</button>
+  </div>
+  <pre id="ai-diagnostics"></pre>
   <pre id="ai-log"></pre>
+  <div id="ai-status"></div>
+  <div id="ai-browser-tree"></div>
   <div id="ai-elements"></div>
 </div>
