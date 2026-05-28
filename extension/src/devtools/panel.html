@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>AI Operator DevTools Panel</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <main class="devtools-shell">
+      <header class="devtools-header">
+        <div>
+          <p class="eyebrow">AI Browser Operator</p>
+          <h1>DevTools Panel</h1>
+        </div>
+        <button id="refresh-page-info" type="button">Refresh page info</button>
+      </header>
+
+      <section class="card">
+        <h2>Inspected page</h2>
+        <dl class="info-grid">
+          <div>
+            <dt>URL</dt>
+            <dd id="page-url">Loading…</dd>
+          </div>
+          <div>
+            <dt>Title</dt>
+            <dd id="page-title">Loading…</dd>
+          </div>
+          <div>
+            <dt>User agent</dt>
+            <dd id="page-user-agent">Loading…</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card">
+        <div class="section-heading">
+          <div>
+            <h2>Network events</h2>
+            <p>Requests are captured while this DevTools window is open.</p>
+          </div>
+          <button id="clear-network" type="button">Clear</button>
+        </div>
+        <div id="network-summary" class="summary">No requests captured yet.</div>
+        <ol id="network-list" class="network-list"></ol>
+      </section>
+
+      <section class="card note">
+        <h2>What this can do</h2>
+        <p>
+          This panel uses supported <code>chrome.devtools</code> APIs. It can inspect the current page and collect
+          network metadata, but it cannot scrape Chrome's built-in DevTools panels like normal webpages.
+        </p>
+      </section>
+
+      <pre id="devtools-log" class="log"></pre>
+    </main>
+    <script src="panel.js"></script>
+  </body>
+</html>
