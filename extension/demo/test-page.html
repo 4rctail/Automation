@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Browser Operator Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; background: #f8fafc; color: #0f172a; }
+    main { max-width: 760px; margin: 0 auto; display: grid; gap: 1rem; }
+    section { background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 1rem; box-shadow: 0 8px 24px rgba(15, 23, 42, .08); }
+    label { display: grid; gap: .35rem; margin: .75rem 0; }
+    input, select, button { font: inherit; padding: .6rem .75rem; border-radius: 8px; border: 1px solid #94a3b8; }
+    button { background: #2563eb; color: white; border: 0; cursor: pointer; margin-right: .5rem; }
+    button.secondary { background: #64748b; }
+    .toggle { display: flex; align-items: center; gap: .5rem; }
+    .dialog { border: 2px solid #7c3aed; background: #f5f3ff; }
+    .metric { font-size: 1.4rem; font-weight: 800; color: #16a34a; }
+  </style>
+</head>
+<body>
+  <main>
+    <section>
+      <h1>AI Browser Operator local demo</h1>
+      <p>Open this page at <code>http://localhost:8000/test-page.html</code>, then click the pinned extension icon or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Y</kbd>.</p>
+      <p>The scanner should detect buttons, inputs, dropdowns, visible text, a checkbox/toggle, a link, a dialog-like area, and a dynamic button added after 2 seconds.</p>
+    </section>
+
+    <section aria-label="Campaign form">
+      <h2>Create a campaign</h2>
+      <button id="create-campaign" data-testid="create-campaign">Create Campaign</button>
+      <button class="secondary" id="retry" aria-label="Retry failed request">Retry</button>
+
+      <label for="ad-name">Ad Name</label>
+      <input id="ad-name" name="adName" placeholder="Ad Name" aria-label="Ad Name" />
+
+      <label for="objective">Objective</label>
+      <select id="objective" name="objective" aria-label="Objective">
+        <option value="traffic">Traffic</option>
+        <option value="gmv">GMV</option>
+        <option value="conversions">Conversions</option>
+      </select>
+
+      <p class="metric">GMV</p>
+
+      <label class="toggle">
+        <input id="campaign-active" type="checkbox" role="switch" aria-label="Campaign Active" />
+        Campaign Active toggle
+      </label>
+
+      <p><a href="#details" aria-label="Open campaign details">Open details link</a></p>
+    </section>
+
+    <section id="details" class="dialog" role="dialog" aria-label="Campaign details dialog">
+      <h2>Dialog-like section</h2>
+      <p>This region has <code>role="dialog"</code> so the scanner can classify it as a dialog.</p>
+      <div role="tablist" aria-label="Campaign tabs">
+        <button role="tab" aria-selected="true">Overview</button>
+        <button role="tab" aria-selected="false">Budget</button>
+      </div>
+    </section>
+
+    <section id="dynamic-area" aria-label="Dynamic content">
+      <h2>Dynamic content</h2>
+      <p>A new button will be inserted below after 2 seconds.</p>
+    </section>
+  </main>
+
+  <script>
+    setTimeout(() => {
+      const button = document.createElement("button");
+      button.id = "dynamic-action";
+      button.textContent = "Dynamic Optimize Button";
+      document.querySelector("#dynamic-area").appendChild(button);
+    }, 2000);
+  </script>
+</body>
+</html>
