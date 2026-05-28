@@ -2,6 +2,7 @@
 #ai-operator-root textarea{width:100%;min-height:64px;margin:6px 0;background:#111827;color:#fff}
 #ai-operator-root button{width:100%;background:#2563eb;color:#fff;border:0;padding:8px;border-radius:6px;cursor:pointer}
 .ai-actions{display:flex;gap:6px}.ai-actions button{flex:1}
+#ai-load-instruction{width:100%;margin-top:6px;color:#e2e8f0}
 #ai-log{max-height:120px;overflow:auto;background:#020617;padding:6px;margin:8px 0}
 #ai-elements{max-height:180px;overflow:auto}
 .ai-element-item{padding:4px 6px;margin:2px 0;background:#111827;border:1px solid #1f2937;border-radius:6px;cursor:pointer}

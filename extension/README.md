@@ -16,6 +16,11 @@
   - macOS: `Command+Shift+Y`
 - If shortcut conflicts with another extension, change it in `chrome://extensions/shortcuts` (or `edge://extensions/shortcuts`).
 
+## Text file export/import
+- **Save BrowserSelect.txt**: exports currently detected elements in a readable pipe-delimited format.
+- **Save BrowserInstruction.txt**: exports instruction text with metadata header.
+- **Load instruction file**: choose a `.txt` file; lines beginning with `#` are ignored (excluded from parsing), remaining lines are loaded into prompt box.
+
 ## Example prompts
 - `Click Create and wait for GMV`
 - `Find Ad Name field and enter Summer Campaign`

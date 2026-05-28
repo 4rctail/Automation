@@ -18,6 +18,9 @@ async function bootstrap() {
   const logEl = document.querySelector("#ai-log");
   const elementsEl = document.querySelector("#ai-elements");
   const overlayToggle = document.querySelector("#ai-toggle-boxes");
+  const saveSelectBtn = document.querySelector("#ai-save-select");
+  const saveInstructionBtn = document.querySelector("#ai-save-instruction");
+  const loadInstructionInput = document.querySelector("#ai-load-instruction");
   const rootEl = document.querySelector("#ai-operator-root");
   let currentSnapshot = [];
   let overlaysVisible = false;
@@ -110,6 +113,47 @@ async function bootstrap() {
     }
   });
 
+  saveSelectBtn.addEventListener("click", () => {
+    const lines = [
+      "# BrowserSelect.txt",
+      `# Generated: ${new Date().toISOString()}`,
+      `# URL: ${location.href}`,
+      "# Format: id | tag | role | type | label | selector",
+      ""
+    ];
+    currentSnapshot.forEach((e) => {
+      lines.push(`${e.id} | ${e.tag} | ${e.role || "-"} | ${e.type || "-"} | ${(e.label || "-").replace(/\n/g, " ")} | ${e.selector}`);
+    });
+    downloadTextFile("BrowserSelect.txt", lines.join("\n"));
+    engine.logger(`Saved BrowserSelect.txt with ${currentSnapshot.length} entries.`);
+  });
+
+  saveInstructionBtn.addEventListener("click", () => {
+    const prompt = document.querySelector("#ai-prompt").value || "";
+    const body = [
+      "# BrowserInstruction.txt",
+      "# Lines beginning with '#' are comments/metadata and are excluded from instruction parsing.",
+      "# Put one instruction per line below:",
+      "",
+      prompt
+    ].join("\n");
+    downloadTextFile("BrowserInstruction.txt", body);
+    engine.logger("Saved BrowserInstruction.txt.");
+  });
+
+  loadInstructionInput.addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const raw = await file.text();
+    const parsed = raw
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter((l) => l && !l.startsWith("#"))
+      .join("\n");
+    document.querySelector("#ai-prompt").value = parsed;
+    engine.logger(`Loaded instructions from ${file.name}.`);
+  });
+
   document.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "y") {
       const isHidden = rootEl.style.display === "none";
@@ -125,4 +169,16 @@ async function bootstrap() {
       rootEl.dataset.debug = `${d.lastAction || "-"} | ${d.lastError || "ok"}`;
     });
   }, 3000);
+}
+
+function downloadTextFile(filename, text) {
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
