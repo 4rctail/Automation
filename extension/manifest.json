@@ -7,7 +7,12 @@
   "host_permissions": [
     "https://ads.tiktok.com/*",
     "https://*.tiktok.com/*",
-    "file:///*"
+    "file:///*",
+    "http://localhost/*",
+    "http://localhost:*/*",
+    "http://127.0.0.1/*",
+    "http://127.0.0.1:*/*",
+    "http://localhost:8787/*"
   ],
   "background": {
     "service_worker": "src/background/service-worker.js",
@@ -15,7 +20,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://ads.tiktok.com/*", "https://*.tiktok.com/*", "file:///*"],
+      "matches": [
+        "https://ads.tiktok.com/*",
+        "https://*.tiktok.com/*",
+        "file:///*",
+        "http://localhost/*",
+        "http://localhost:*/*",
+        "http://127.0.0.1/*",
+        "http://127.0.0.1:*/*"
+      ],
       "js": [
         "src/shared/selectors.js",
         "src/content/dom-scanner.js",
