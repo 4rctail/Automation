@@ -1,0 +1,33 @@
+{
+  "name": "browser-orchestration-cdp",
+  "version": "1.0.0",
+  "description": "Central Playwright/CDP controller for already-open Chromium browsers including Edge, Brave, and AdsPower profiles.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "example:edge": "node examples/launch-edge.js",
+    "example:brave": "node examples/launch-brave.js",
+    "example:adspower": "node examples/start-adspower-profile.js",
+    "example:client": "node examples/multi-browser-client.js"
+  },
+  "keywords": [
+    "playwright",
+    "cdp",
+    "chromium",
+    "edge",
+    "brave",
+    "adspower",
+    "browser-automation"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "playwright": "^1.44.1",
+    "ws": "^8.17.0"
+  }
+}
