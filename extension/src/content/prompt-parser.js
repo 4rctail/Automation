@@ -3,24 +3,73 @@
   window.AIOperatorPromptParserLoaded = true;
 
   function parsePrompt(prompt) {
-    const p = prompt.trim();
-    if (/^click\s+/i.test(p)) {
-      const [, target] = p.match(/^click\s+(.+)/i) || [];
-      return [{ type: "click", target }];
+    return splitInstructionLines(prompt).flatMap(parseInstructionLine).filter(Boolean);
+  }
+
+  function splitInstructionLines(prompt) {
+    return String(prompt || "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#"));
+  }
+
+  function parseInstructionLine(line) {
+    const p = line.trim();
+
+    const conditionalRetry = p.match(/^if\s+(.+?)\s+appears,?\s*(?:then\s+)?retry$/i);
+    if (conditionalRetry) {
+      return [{ type: "if_text_click", value: conditionalRetry[1].trim(), target: "retry", timeoutMs: 5000 }];
     }
-    if (/enter\s+/i.test(p) || /type\s+/i.test(p)) {
-      const m = p.match(/(?:find\s+)?(.+?)\s+(?:and\s+)?(?:enter|type)\s+(.+)/i);
-      if (m) return [{ type: "type", target: m[1], value: m[2] }];
+
+    const clickAndWait = p.match(/^click\s+(.+?)\s+(?:and\s+)?(?:then\s+)?wait\s+for\s+(.+)$/i);
+    if (clickAndWait) {
+      return [
+        { type: "click", target: clickAndWait[1].trim() },
+        { type: "wait_text", value: clickAndWait[2].trim() }
+      ];
     }
-    if (/wait\s+for\s+/i.test(p)) {
-      const [, text] = p.match(/wait\s+for\s+(.+)/i) || [];
-      return [{ type: "wait_text", value: text }];
+
+    const chained = splitChainedInstruction(p);
+    if (chained.length > 1) {
+      return chained.flatMap(parseInstructionLine);
     }
-    if (/if\s+(.+)\s+appears,?\s*retry/i.test(p)) {
-      const [, text] = p.match(/if\s+(.+)\s+appears,?\s*retry/i) || [];
-      return [{ type: "wait_text", value: text, timeoutMs: 5000 }, { type: "click", target: "retry" }];
+
+    const click = p.match(/^click\s+(.+)$/i);
+    if (click) return [{ type: "click", target: click[1].trim() }];
+
+    const type = p.match(/^(?:find\s+)?(.+?)\s+(?:field\s+)?(?:and\s+)?(?:enter|type)\s+(.+)$/i);
+    if (type) return [{ type: "type", target: cleanupTarget(type[1]), value: type[2].trim() }];
+
+    const selectIn = p.match(/^(?:select|choose)\s+(.+?)\s+(?:in|from)\s+(.+)$/i);
+    if (selectIn) return [{ type: "select", target: cleanupTarget(selectIn[2]), value: selectIn[1].trim() }];
+
+    const setTo = p.match(/^set\s+(.+?)\s+to\s+(.+)$/i);
+    if (setTo) return [{ type: "select", target: cleanupTarget(setTo[1]), value: setTo[2].trim() }];
+
+    const wait = p.match(/^wait\s+for\s+(.+)$/i);
+    if (wait) return [{ type: "wait_text", value: wait[1].trim() }];
+
+    const scroll = p.match(/^scroll(?:\s+(down|up))?(?:\s+(\d+))?$/i);
+    if (scroll) {
+      const direction = (scroll[1] || "down").toLowerCase();
+      const amount = Number(scroll[2] || 500);
+      return [{ type: "scroll", px: direction === "up" ? -amount : amount }];
     }
+
     return [];
+  }
+
+  function splitChainedInstruction(line) {
+    return line
+      .split(/\s+(?:then|and then)\s+/i)
+      .map((part) => part.trim())
+      .filter(Boolean);
+  }
+
+  function cleanupTarget(target) {
+    return String(target || "")
+      .replace(/\s+(?:field|input|dropdown|select|menu)$/i, "")
+      .trim();
   }
 
   window.AIOperatorPromptParser = { parsePrompt };

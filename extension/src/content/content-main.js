@@ -1,4 +1,15 @@
 (() => {
+  const isAllowedPage = location.hostname === "tiktok.com"
+    || location.hostname.endsWith(".tiktok.com")
+    || location.hostname === "localhost"
+    || location.hostname === "127.0.0.1"
+    || location.protocol === "file:";
+
+  if (!isAllowedPage) {
+    console.info("AI Operator disabled on non-allowed domain.");
+    return;
+  }
+
   if (window.AIOperatorContentMainLoaded) {
     window.AIOperatorShow?.();
     return;
@@ -8,17 +19,6 @@
   const { DOMScanner } = window.AIOperatorDOMScanner;
   const { ActionEngine } = window.AIOperatorActionEngine;
   const { parsePrompt } = window.AIOperatorPromptParser;
-
-  const allowedHosts = ["ads.tiktok.com", "business.tiktok.com"];
-  const isAllowedPage = allowedHosts.some((d) => location.hostname === d || location.hostname.endsWith(`.${d}`))
-    || location.hostname === "localhost"
-    || location.hostname === "127.0.0.1"
-    || location.protocol === "file:";
-
-  if (!isAllowedPage) {
-    console.info("AI Operator disabled on non-allowed domain.");
-    return;
-  }
 
   bootstrap();
 
@@ -435,7 +435,7 @@
 
     const selector = document.createElement("div");
     selector.className = "ai-element-selector";
-    selector.textContent = element.selector;
+    selector.textContent = element.exactSelector || element.selector;
 
     row.append(meta, label, selector);
     return row;
@@ -467,9 +467,9 @@
     lines.push(`url=${location.href}`);
     lines.push(`controls=${elements.length} visibleTexts=${texts.length}`);
     lines.push("");
-    lines.push("# Page Controls Format: index | id | kind | tag | role | type | label | selector");
+    lines.push("# Page Controls Format: index | id | kind | tag | role | type | label | exactSelector | semanticSelector");
     elements.forEach((e, index) => {
-      lines.push(`${index + 1} | ${e.id} | ${e.kind || "unknown"} | ${e.tag} | ${e.role || "-"} | ${e.type || "-"} | ${sanitizeText(e.label || "-")} | ${e.selector}`);
+      lines.push(`${index + 1} | ${e.id} | ${e.kind || "unknown"} | ${e.tag} | ${e.role || "-"} | ${e.type || "-"} | ${sanitizeText(e.label || "-")} | ${e.exactSelector || "-"} | ${e.selector}`);
     });
     lines.push("");
     lines.push("# Visible Texts");
@@ -487,7 +487,7 @@
 
   function findElementForEntry(entry) {
     try {
-      const selector = entry.selector.startsWith("#") || entry.selector.includes("[") ? entry.selector : entry.tag;
+      const selector = entry.exactSelector || (entry.selector.startsWith("#") || entry.selector.includes("[") ? entry.selector : entry.tag);
       return document.querySelector(selector);
     } catch (err) {
       return null;

@@ -11,6 +11,65 @@
 
 > Do not open `src/content/overlay.html` directly. It is a partial UI template loaded by the content script inside a supported browser page, so it will not work as a standalone page.
 
+
+## Final validation
+Run these checks after changing the extension code:
+
+```bash
+cd extension
+npm run verify
+```
+
+`npm run verify` performs JavaScript syntax checks, validates `manifest.json`, and runs prompt-parser regression tests for the documented instruction examples. No install step is required for these checks because they use only Node built-ins.
+
+## How to use
+1. Load the extension:
+   - Open Chrome/Edge and go to `chrome://extensions` or `edge://extensions`.
+   - Enable **Developer mode**.
+   - Choose **Load unpacked** and select this repository's `extension/` folder.
+   - Pin **AI Browser Operator** to the browser toolbar.
+2. Open a supported page:
+   - Use `http://localhost:8000/test-page.html` from the demo server for first validation.
+   - Or use an allowed TikTok page, `localhost`, `127.0.0.1`, or `file://`.
+   - For `file://` pages, enable **Allow access to file URLs** on the extension details page.
+3. Open the panel:
+   - Click the pinned extension icon, or press `Ctrl+Shift+Y` (`Command+Shift+Y` on macOS).
+4. Review what the scanner found:
+   - Confirm the panel shows **PC**, **Browser**, **Tabs and windows**, and **Current Page Details**.
+   - Expand control groups to see buttons, inputs, dropdowns, toggles, links, and visible text.
+   - Click **Show Found Overlays** if you want boxes drawn around detected controls.
+5. Run an instruction:
+   - Enter one or more prompt lines in the text box.
+   - Click **Run**.
+   - Watch the log for each parsed action and any failures.
+6. Export or sync files when needed:
+   - Click **Save BrowserSelect.txt** to download the current page/browser hierarchy and selectors.
+   - Click **Save BrowserInstruction.txt** to download the current instruction text.
+   - Start `node extension/tools/browser-file-server.js` from the repo root and enable **Live sync BrowserSelect** to write the current selection data to `extension/local-data/BrowserSelect.txt`.
+
+## Supported instruction examples
+- `Click Create and wait for GMV`
+- `Find Ad Name field and enter Summer Campaign`
+- `Select GMV in Objective`
+- `Choose GMV from Objective`
+- `Set Objective to GMV`
+- `If Something Went Wrong appears, retry`
+- `Scroll down 500`
+- Multi-line files are supported; blank lines and lines beginning with `#` are ignored.
+
+## Manual smoke test
+1. From the repo root, run:
+   ```bash
+   cd extension/demo
+   python -m http.server 8000
+   ```
+2. Open `http://localhost:8000/test-page.html`.
+3. Open the extension panel.
+4. Run `Click Create and wait for GMV`; the action should click the **Create Campaign** button and complete after finding the **GMV** text.
+5. Run `Find Ad Name field and enter Summer Campaign`; the **Ad Name** input should receive that value.
+6. Run `Select GMV in Objective`; the **Objective** dropdown should switch to **GMV**.
+7. Click **Save BrowserSelect.txt** and confirm exported controls include an `exactSelector` column.
+
 ## Demo page
 1. Start the demo server:
    ```bash
