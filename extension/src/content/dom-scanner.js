@@ -4,6 +4,8 @@
 
   const { buildSemanticLabel, stableSelector } = window.AIOperatorSelectors;
 
+  const EXACT_TARGET_ATTRIBUTE = "data-ai-operator-id";
+
   const CANDIDATE_SELECTOR = [
     "button",
     "a[href]",
@@ -38,6 +40,7 @@
       this.onUpdate = onUpdate;
       this.map = [];
       this.observer = null;
+      this.nextId = 0;
       this.handleScan = () => this.scan();
     }
 
@@ -56,25 +59,33 @@
     }
 
     scan() {
-      const candidates = [...document.querySelectorAll(CANDIDATE_SELECTOR)].filter(isVisible);
+      const candidates = [...document.querySelectorAll(CANDIDATE_SELECTOR)]
+        .filter((el) => !el.closest("#ai-operator-root") && isVisible(el));
       const visibleTextNodes = [...document.querySelectorAll("body *")]
-        .filter((n) => n.childElementCount === 0 && isVisible(n))
+        .filter((n) => !n.closest("#ai-operator-root") && n.childElementCount === 0 && isVisible(n))
         .map((n) => n.textContent?.trim())
         .filter((t) => t && t.length > 1);
 
-      this.map = candidates.map((el, idx) => {
+      this.map = candidates.map((el) => {
         const text = (el.innerText || el.textContent || "").trim();
-        if (text && text.length < 80) {
+        let id = el.getAttribute(EXACT_TARGET_ATTRIBUTE);
+        if (!id) {
+          id = `el-${this.nextId}`;
+          this.nextId += 1;
+          el.setAttribute(EXACT_TARGET_ATTRIBUTE, id);
+        }
+        if (text && text.length < 80 && el.getAttribute("data-ai-text") !== text) {
           el.setAttribute("data-ai-text", text);
         }
         return ({
-          id: `el-${idx}`,
+          id,
           kind: detectKind(el),
           tag: el.tagName.toLowerCase(),
           role: el.getAttribute("role") || "",
           type: el.getAttribute("type") || "",
           label: buildSemanticLabel(el),
           selector: stableSelector(el),
+          exactSelector: `[${EXACT_TARGET_ATTRIBUTE}="${id}"]`,
           disabled: !!el.disabled,
           rect: el.getBoundingClientRect().toJSON()
         });
